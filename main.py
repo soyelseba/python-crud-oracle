@@ -1,14 +1,30 @@
 from datetime import date
 from decimal import Decimal
+import os
 import oracledb
+from dotenv import load_dotenv
+
+
+load_dotenv()
+
+ORACLE_USER = os.getenv("ORACLE_USER")
+ORACLE_PASSWORD = os.getenv("ORACLE_PASSWORD")
+ORACLE_DSN = os.getenv("ORACLE_DSN")
 
 
 class ConexionOracle:
     __conexion = None
 
     @classmethod
-    def conectar(cls, usuario, clave, dsn):
-        cls.__conexion = oracledb.connect(user=usuario, password=clave, dsn=dsn)
+    def conectar(cls):
+        if not ORACLE_USER or not ORACLE_PASSWORD or not ORACLE_DSN:
+            raise RuntimeError("Faltan variables de Oracle en el archivo .env.")
+
+        cls.__conexion = oracledb.connect(
+            user=ORACLE_USER,
+            password=ORACLE_PASSWORD,
+            dsn=ORACLE_DSN
+        )
 
     @classmethod
     def obtener_conexion(cls):
